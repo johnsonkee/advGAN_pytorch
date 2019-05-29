@@ -137,7 +137,7 @@ class AdvGAN_Attack:
             loss_adv_sum = 0
             for i, data in enumerate(zip(train_dataloader,adv_dataloader), start=0):
                 images, labels = data[0]
-                adv_images,_ = data[1][0]
+                adv_images,_ = data[1]
                 images, labels = images.to(self.device), labels.to(self.device)
                 adv_images = adv_images.to(self.device)
 

@@ -1,10 +1,14 @@
 import torch
 import torchvision.datasets
 import torchvision.transforms as transforms
+import time
+import numpy as np
+
 from torch.utils.data import DataLoader
 from advGAN import AdvGAN_Attack
 from models import MNIST_target_net
-import time
+from torch.utils.data import TensorDataset
+
 
 use_cuda=True
 image_nc=1
@@ -27,6 +31,11 @@ model_num_labels = 10
 mnist_dataset = torchvision.datasets.MNIST('./dataset', train=True, transform=transforms.ToTensor(), download=True)
 dataloader = DataLoader(mnist_dataset, batch_size=batch_size, shuffle=False, num_workers=1)
 
+mifgsm_b_adv = np.load('mifgsm_b_adv.npy')
+my_label = mnist_dataset.train_labels.clone()
+mydataset = TensorDataset(torch.tensor(mifgsm_b_adv),my_label)
+my_dataloader = DataLoader(mydataset,batch_size=batch_size, shuffle=False, num_workers=1)
+
 start_time = time.time()
 
 advGAN = AdvGAN_Attack(device,
@@ -36,7 +45,7 @@ advGAN = AdvGAN_Attack(device,
                           BOX_MIN,
                           BOX_MAX)
 
-advGAN.train(dataloader, epochs)
+advGAN.train(dataloader, my_dataloader, epochs)
 
 end_time = time.time()
 print("advGAN training time is {}".format(end_time - start_time))

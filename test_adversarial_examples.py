@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 import models
 from models import MNIST_target_net
 import numpy as np
+import time
 
 use_cuda=True
 image_nc=1
@@ -50,6 +51,8 @@ print('accuracy of adv imgs in training set: %f\n'%(num_correct.item()/len(mnist
 mnist_dataset_test = torchvision.datasets.MNIST('./dataset', train=False, transform=transforms.ToTensor(), download=True)
 test_dataloader = DataLoader(mnist_dataset_test, batch_size=batch_size, shuffle=False, num_workers=1)
 num_correct = 0
+
+start_time = time.time()
 for i, data in enumerate(test_dataloader, 0):
     test_img, test_label = data
     test_img, test_label = test_img.to(device), test_label.to(device)
@@ -62,6 +65,9 @@ for i, data in enumerate(test_dataloader, 0):
 
     pred_lab = torch.argmax(target_model(adv_img),1)
     num_correct += torch.sum(pred_lab==test_label,0)
+
+end_time = time.time()
+print("generating adversary time: {}".format(end_time-start_time))
 
 print('num_correct: ', num_correct.item())
 print('accuracy of adv imgs in testing set: %f\n'%(num_correct.item()/len(mnist_dataset_test)))

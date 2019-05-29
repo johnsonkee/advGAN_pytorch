@@ -86,6 +86,7 @@ class AdvGAN_Attack:
             C = 0.1
             loss_perturb = torch.mean(torch.norm(perturbation.view(perturbation.shape[0], -1), float('inf'), dim=1))
             # loss_perturb = torch.max(loss_perturb - C, torch.zeros(1, device=self.device))
+
             # cal adv loss
             logits_model = self.model(adv_images)
             probs_model = F.softmax(logits_model, dim=1)

@@ -57,7 +57,7 @@ for i, data in enumerate(test_dataloader, 0):
     perturbation = torch.clamp(perturbation, -0.3, 0.3)
     adv_img = perturbation + test_img
     adv_img = torch.clamp(adv_img, 0, 1)
-    tmp = adv_img.detach().numpy()
+    tmp = adv_img.detach().cpu().numpy()
     np.save("norm2_modelA_originGAN.npy",tmp)
 
     pred_lab = torch.argmax(target_model(adv_img),1)

@@ -24,7 +24,7 @@ target_model.load_state_dict(torch.load(pretrained_model))
 target_model.eval()
 
 # load the generator of adversarial examples
-pretrained_generator_path = './models/netG_epoch_60.pth'
+pretrained_generator_path = './models/netG_epoch_40.pth'
 pretrained_G = models.Generator(gen_input_nc, image_nc).to(device)
 pretrained_G.load_state_dict(torch.load(pretrained_generator_path))
 pretrained_G.eval()
@@ -37,7 +37,7 @@ for i, data in enumerate(train_dataloader, 0):
     test_img, test_label = data
     test_img, test_label = test_img.to(device), test_label.to(device)
     perturbation = pretrained_G(test_img)
-    perturbation = torch.clamp(perturbation, -0.3, 0.3)
+    perturbation = torch.clamp(perturbation, -0.2, 0.2)
     adv_img = perturbation + test_img
     adv_img = torch.clamp(adv_img, 0, 1)
     pred_lab = torch.argmax(target_model(adv_img),1)
@@ -57,7 +57,7 @@ for i, data in enumerate(test_dataloader, 0):
     test_img, test_label = data
     test_img, test_label = test_img.to(device), test_label.to(device)
     perturbation = pretrained_G(test_img)
-    perturbation = torch.clamp(perturbation, -0.3, 0.3)
+    perturbation = torch.clamp(perturbation, -0.2, 0.2)
     adv_img = perturbation + test_img
     adv_img = torch.clamp(adv_img, 0, 1)
     tmp = adv_img.detach().cpu().numpy()

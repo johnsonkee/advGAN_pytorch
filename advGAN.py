@@ -59,7 +59,7 @@ class AdvGAN_Attack:
             perturbation = self.netG(x)
 
             # add a clipping trick
-            adv_images = torch.clamp(perturbation, -0.3, 0.3) + x
+            adv_images = torch.clamp(perturbation, -0.2, 0.2) + x
             adv_images = torch.clamp(adv_images, self.box_min, self.box_max)
 
             self.optimizer_D.zero_grad()
@@ -82,11 +82,10 @@ class AdvGAN_Attack:
             loss_G_fake = F.mse_loss(pred_fake, torch.ones_like(pred_fake, device=self.device))
             loss_G_fake.backward(retain_graph=True)
 
-            # calculate perturbation norm
+            # calculate perturbation norm, norm_inf
             C = 0.1
-            loss_perturb = torch.mean(torch.norm(perturbation.view(perturbation.shape[0], -1), 2, dim=1))
+            loss_perturb = torch.mean(torch.norm(perturbation.view(perturbation.shape[0], -1), float('inf'), dim=1))
             # loss_perturb = torch.max(loss_perturb - C, torch.zeros(1, device=self.device))
-
             # cal adv loss
             logits_model = self.model(adv_images)
             probs_model = F.softmax(logits_model, dim=1)

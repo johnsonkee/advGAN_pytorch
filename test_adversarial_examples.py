@@ -4,6 +4,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 import models
 from models import MNIST_target_net
+import numpy as np
 
 use_cuda=True
 image_nc=1
@@ -56,6 +57,9 @@ for i, data in enumerate(test_dataloader, 0):
     perturbation = torch.clamp(perturbation, -0.3, 0.3)
     adv_img = perturbation + test_img
     adv_img = torch.clamp(adv_img, 0, 1)
+    tmp = adv_img.numpy()
+    np.save("norm2_modelA_originGAN.npy",tmp)
+
     pred_lab = torch.argmax(target_model(adv_img),1)
     num_correct += torch.sum(pred_lab==test_label,0)
 

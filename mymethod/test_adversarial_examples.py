@@ -25,7 +25,7 @@ target_model.load_state_dict(torch.load(pretrained_model))
 target_model.eval()
 
 # load the generator of adversarial examples
-pretrained_generator_path = './models/netG_epoch_20.pth'
+pretrained_generator_path = './models/netG_epoch_60.pth'
 pretrained_G = models.Generator(gen_input_nc, image_nc).to(device)
 pretrained_G.load_state_dict(torch.load(pretrained_generator_path))
 pretrained_G.eval()
@@ -90,4 +90,4 @@ end_time = time.time()
 print("generating adversary time: {}".format(end_time-start_time))
 
 print('num_correct: ', num_correct.item())
-print('accuracy of adv imgs in my adv: %f\n'%(num_correct.item()/len(mnist_dataset_test)))
+print('accuracy of adv imgs in my adv: %f\n'%(num_correct.item()/len(mydataset)))

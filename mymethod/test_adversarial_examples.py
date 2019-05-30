@@ -79,13 +79,9 @@ my_label = mnist_dataset.train_labels.clone()
 mydataset = TensorDataset(torch.tensor(mifgsm_b_adv),my_label)
 my_dataloader = DataLoader(mydataset,batch_size=batch_size, shuffle=False, num_workers=1)
 num_correct = 0
-for i, data in enumerate(test_dataloader, 0):
-    test_img, test_label = data
-    test_img, test_label = test_img.to(device), test_label.to(device)
-    perturbation = pretrained_G(test_img)
-    perturbation = torch.clamp(perturbation, -0.2, 0.2)
-    adv_img = perturbation + test_img
-    adv_img = torch.clamp(adv_img, 0, 1)
+for i, data in enumerate(my_dataloader, 0):
+    adv_img, test_label = data
+    adv_img, test_label = adv_img.to(device), test_label.to(device)
     tmp = adv_img.detach().cpu().numpy()
     pred_lab = torch.argmax(target_model(adv_img),1)
     num_correct += torch.sum(pred_lab==test_label,0)

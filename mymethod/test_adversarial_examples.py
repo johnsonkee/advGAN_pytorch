@@ -74,7 +74,7 @@ print('accuracy of adv imgs in testing set: %f\n'%(num_correct.item()/len(mnist_
 
 
 # my adv examples
-mifgsm_b_adv = np.load('mifgsm_b_adv.npy')
+mifgsm_b_adv = np.load('mifgsm_b_adv.npy').reshape(-1,1,28,28)
 my_label = mnist_dataset.train_labels.clone()
 mydataset = TensorDataset(torch.tensor(mifgsm_b_adv),my_label)
 my_dataloader = DataLoader(mydataset,batch_size=batch_size, shuffle=False, num_workers=1)

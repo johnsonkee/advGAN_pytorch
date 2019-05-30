@@ -24,7 +24,7 @@ target_model.load_state_dict(torch.load(pretrained_model))
 target_model.eval()
 
 # load the generator of adversarial examples
-pretrained_generator_path = './models/netG_epoch_20.pth'
+pretrained_generator_path = './models/netG_epoch_60.pth'
 pretrained_G = models.Generator(gen_input_nc, image_nc).to(device)
 pretrained_G.load_state_dict(torch.load(pretrained_generator_path))
 pretrained_G.eval()
@@ -53,6 +53,7 @@ test_dataloader = DataLoader(mnist_dataset_test, batch_size=batch_size, shuffle=
 num_correct = 0
 
 start_time = time.time()
+my_adv = []
 for i, data in enumerate(test_dataloader, 0):
     test_img, test_label = data
     test_img, test_label = test_img.to(device), test_label.to(device)
@@ -61,11 +62,12 @@ for i, data in enumerate(test_dataloader, 0):
     adv_img = perturbation + test_img
     adv_img = torch.clamp(adv_img, 0, 1)
     tmp = adv_img.detach().cpu().numpy()
-    np.save("norm2_modelA_originGAN.npy",tmp)
+    my_adv.append(tmp)
+    # np.save("norm2_modelA_originGAN.npy",tmp)
 
     pred_lab = torch.argmax(target_model(adv_img),1)
     num_correct += torch.sum(pred_lab==test_label,0)
-
+np.save("origingan_a_test_adv.npy",my_adv)
 end_time = time.time()
 print("generating adversary time: {}".format(end_time-start_time))
 

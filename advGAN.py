@@ -82,7 +82,7 @@ class AdvGAN_Attack:
             loss_G_fake = F.mse_loss(pred_fake, torch.ones_like(pred_fake, device=self.device))
             loss_G_fake.backward(retain_graph=True)
 
-            # calculate perturbation norm, norm_inf
+            # calculate perturbation norm
             C = 0.1
             loss_perturb = torch.mean(torch.norm(perturbation.view(perturbation.shape[0], -1), float('inf'), dim=1))
             # loss_perturb = torch.max(loss_perturb - C, torch.zeros(1, device=self.device))
@@ -111,7 +111,7 @@ class AdvGAN_Attack:
 
         return loss_D_GAN.item(), loss_G_fake.item(), loss_perturb.item(), loss_adv.item()
 
-    def train(self, train_dataloader, epochs):
+    def train(self, train_dataloader,epochs):
         for epoch in range(1, epochs+1):
 
             if epoch == 50:

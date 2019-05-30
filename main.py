@@ -8,7 +8,7 @@ import time
 
 use_cuda=True
 image_nc=1
-epochs = 60
+epochs = 100
 batch_size = 128
 BOX_MIN = 0
 BOX_MAX = 1

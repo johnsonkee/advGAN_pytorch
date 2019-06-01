@@ -46,6 +46,7 @@ class MNIST_target_netA(nn.Module):
         x = F.relu(self.conv3(x))
         x = x.view(-1, 128*1*1)
         x = F.relu(self.fc1(x))
+        x = F.softmax(x)
         return x
 
 class Discriminator(nn.Module):

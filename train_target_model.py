@@ -26,7 +26,7 @@ if __name__ == "__main__":
     for epoch in range(epochs):
         loss_epoch = 0
         if epoch == 20:
-            opt_model = torch.optim.Adam(target_model.parameters(), lr=0.0001)
+            opt_model = torch.optim.Adam(target_model.parameters(), lr=0.001)
         for i, data in enumerate(train_dataloader, 0):
             train_imgs, train_labels = data
             train_imgs, train_labels = train_imgs.to(device), train_labels.to(device)

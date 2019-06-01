@@ -31,9 +31,9 @@ class MNIST_target_net(nn.Module):
         return x
 
 class MNIST_target_netA(nn.Module):
-    #model A
+    #model b
     def __init__(self):
-        super(MNIST_target_net, self).__init__()
+        super(MNIST_target_netA, self).__init__()
         self.conv1 = nn.Conv2d(1, 64, kernel_size=8,padding=(3,3),stride=(2,2))
         self.conv2 = nn.Conv2d(64, 128, kernel_size=6,padding=0,stride=(2,2))
         self.conv3 = nn.Conv2d(128, 128, kernel_size=5,padding=0,stride=(1,1))

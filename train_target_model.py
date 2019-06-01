@@ -3,7 +3,7 @@ import torchvision.datasets
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
-from models import  MNIST_target_net
+from models import  MNIST_target_net,MNIST_target_netA
 
 
 if __name__ == "__main__":
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     train_dataloader = DataLoader(mnist_dataset, batch_size=batch_size, shuffle=False, num_workers=1)
 
     # training the target model
-    target_model = MNIST_target_net().to(device)
+    target_model = MNIST_target_netA().to(device)
     target_model.train()
     opt_model = torch.optim.Adam(target_model.parameters(), lr=0.001)
     epochs = 40
@@ -40,7 +40,7 @@ if __name__ == "__main__":
         print('loss in epoch %d: %f' % (epoch, loss_epoch.item()))
 
     # save model
-    targeted_model_file_name = './MNIST_target_model.pth'
+    targeted_model_file_name = './MNIST_target_modelA.pth'
     torch.save(target_model.state_dict(), targeted_model_file_name)
     target_model.eval()
 

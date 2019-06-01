@@ -3,7 +3,7 @@ import torchvision.datasets
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from advGAN import AdvGAN_Attack
-from models import MNIST_target_net
+from models import MNIST_target_net,MNIST_target_netA
 import time
 
 use_cuda=True
@@ -17,10 +17,16 @@ BOX_MAX = 1
 print("CUDA Available: ",torch.cuda.is_available())
 device = torch.device("cuda" if (use_cuda and torch.cuda.is_available()) else "cpu")
 
-pretrained_model = "./MNIST_target_model.pth"
-targeted_model = MNIST_target_net().to(device)
-targeted_model.load_state_dict(torch.load(pretrained_model))
-targeted_model.eval()
+pretrained_model1 = "./MNIST_target_model.pth"
+pretrained_model2 = "./MNIST_target_modelA.pth"
+targeted_model1 = MNIST_target_net().to(device)
+targeted_model1.load_state_dict(torch.load(pretrained_model1))
+targeted_model1.eval()
+targeted_model2 = MNIST_target_netA().to(device)
+targeted_model2.load_state_dict(torch.load(pretrained_model2))
+targeted_model2.eval()
+
+
 model_num_labels = 10
 
 # MNIST train dataset and dataloader declaration
@@ -30,7 +36,8 @@ dataloader = DataLoader(mnist_dataset, batch_size=batch_size, shuffle=True, num_
 start_time = time.time()
 
 advGAN = AdvGAN_Attack(device,
-                          targeted_model,
+                          targeted_model1,
+                          targeted_model2,
                           model_num_labels,
                           image_nc,
                           BOX_MIN,

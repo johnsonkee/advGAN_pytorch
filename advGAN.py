@@ -22,7 +22,8 @@ def weights_init(m):
 class AdvGAN_Attack:
     def __init__(self,
                  device,
-                 model,
+                 model1,
+                 model2,
                  model_num_labels,
                  image_nc,
                  box_min,
@@ -30,7 +31,8 @@ class AdvGAN_Attack:
         output_nc = image_nc
         self.device = device
         self.model_num_labels = model_num_labels
-        self.model = model
+        self.model1 = model1
+        self.model2 = model2
         self.input_nc = image_nc
         self.output_nc = output_nc
         self.box_min = box_min
@@ -88,16 +90,26 @@ class AdvGAN_Attack:
             # loss_perturb = torch.max(loss_perturb - C, torch.zeros(1, device=self.device))
 
             # cal adv loss
-            logits_model = self.model(adv_images)
-            probs_model = F.softmax(logits_model, dim=1)
+            logits_model1 = self.model1(adv_images)
+            logits_model2 = self.model2(adv_images)
+            probs_model1 = F.softmax(logits_model1, dim=1)
+            probs_model2 = F.softmax(logits_model2, dim=1)
             onehot_labels = torch.eye(self.model_num_labels, device=self.device)[labels]
 
             # C&W loss function
-            real = torch.sum(onehot_labels * probs_model, dim=1)
-            other, _ = torch.max((1 - onehot_labels) * probs_model - onehot_labels * 10000, dim=1)
-            zeros = torch.zeros_like(other)
-            loss_adv = torch.max(real - other, zeros)
-            loss_adv = torch.sum(loss_adv)
+            real1 = torch.sum(onehot_labels * probs_model1, dim=1)
+            other1, _ = torch.max((1 - onehot_labels) * probs_model1 - onehot_labels * 10000, dim=1)
+            zeros1 = torch.zeros_like(other1)
+            loss_adv1 = torch.max(real1 - other1, zeros1)
+            loss_adv1 = torch.sum(loss_adv1)
+
+            real2 = torch.sum(onehot_labels * probs_model2, dim=1)
+            other2, _ = torch.max((1 - onehot_labels) * probs_model2 - onehot_labels * 10000, dim=1)
+            zeros2 = torch.zeros_like(other2)
+            loss_adv2 = torch.max(real2 - other2, zeros2)
+            loss_adv2 = torch.sum(loss_adv2)
+
+            loss_adv = (loss_adv1 + loss_adv2) / 2
 
             # maximize cross_entropy loss
             # loss_adv = -F.mse_loss(logits_model, onehot_labels)
@@ -148,6 +160,6 @@ class AdvGAN_Attack:
 
             # save generator
             if epoch%20==0:
-                netG_file_name = models_path + 'netG_epoch_' + str(epoch) + '.pth'
+                netG_file_name = models_path + 'netG_epochA_' + str(epoch) + '.pth'
                 torch.save(self.netG.state_dict(), netG_file_name)
 

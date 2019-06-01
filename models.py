@@ -30,6 +30,23 @@ class MNIST_target_net(nn.Module):
         x = self.logits(x)
         return x
 
+class MNIST_target_netA(nn.Module):
+    #model A
+    def __init__(self):
+        super(MNIST_target_net, self).__init__()
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=8,padding=(3,3),stride=(2,2))
+        self.conv2 = nn.Conv2d(64, 128, kernel_size=6,padding=0,stride=(2,2))
+        self.conv3 = nn.Conv2d(128, 128, kernel_size=5,padding=0,stride=(1,1))
+
+        self.fc1 = nn.Linear(128*1*1, 10)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+        x = x.view(-1, 128*1*1)
+        x = F.relu(self.fc1(x))
+        return x
 
 class Discriminator(nn.Module):
     def __init__(self, image_nc):
